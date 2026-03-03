@@ -1,24 +1,75 @@
+// platform includes
 #include <Arduino.h>
+#include <Preferences.h>
 
-#include "env.h"
-
-#define OUTPUT_PIN GPIO_NUM_0
-
+// library includes
 #include <FastBot2.h>
+
+// local includes
+#include "env.h"
+#include "commands.h"
+#include "config_keys.h"
+#include "translate.h"
+
+// local defines
+#define OUTPUT_PIN GPIO_NUM_0
+#define LONG_PRESS_TIME_DEFAULT 10000U
+#define SHORT_PRESS_TIME_DEFAULT 500U
+#define LANG_DEFAULT TRANSLATE_LANG_EN
+
+// Global variables
 FastBot2 bot;
+Preferences preferences;
+
+void init_config(){
+    bool isConfigured = preferences.getBool(CONFIG_KEY_IS_CONFIGURED);
+
+    if (!isConfigured){
+        preferences.putUInt(CONFIG_KEY_SHORT_PRESS_TIME, SHORT_PRESS_TIME_DEFAULT);
+        preferences.putUInt(CONFIG_KEY_LONG_PRESS_TIME, LONG_PRESS_TIME_DEFAULT);
+        preferences.putUInt(CONFIG_KEY_LANGUAGE, LANG_DEFAULT);
+    }
+}
 
 void press_button(fb::Update& u){
     digitalWrite(OUTPUT_PIN, HIGH);
-    delay(3000);
+    delay(preferences.getUInt(CONFIG_KEY_SHORT_PRESS_TIME));
     digitalWrite(OUTPUT_PIN, LOW);
-    bot.sendMessage(fb::Message("Нажата кнопка", u.message().from().id()));
+    bot.sendMessage(fb::Message("Кнопка нажата кратко", u.message().from().id()));
+}
+
+void long_press_button(fb::Update& u){
+    digitalWrite(OUTPUT_PIN, HIGH);
+    delay(preferences.getUInt(CONFIG_KEY_LONG_PRESS_TIME));
+    digitalWrite(OUTPUT_PIN, LOW);
+    bot.sendMessage(fb::Message("Кнопка нажата длительно", u.message().from().id()));
+}
+
+void send_config(fb::Update& u){
+    String str = "";
+    str += "Is Configured: " + String(preferences.getBool(CONFIG_KEY_IS_CONFIGURED) ? "true" : "false") + "\n";
+    str += "Short press time: " + String(preferences.getUInt(CONFIG_KEY_SHORT_PRESS_TIME)) + "\n";
+    str += "Long press time: " + String(preferences.getUInt(CONFIG_KEY_LONG_PRESS_TIME)) + "\n";
+    str += "Lang: " + String(preferences.getUInt(CONFIG_KEY_LANGUAGE) == 0 ? "EN" : "RU") + "\n";
+
+    fb::Message msg(str, u.message().from().id());
+    bot.sendMessage(msg);
 }
 
 void send_menu(fb::Update& u){
-    fb::Message msg("Меню", u.message().from().id());
-    fb::InlineMenu menu("Нажать кнопку;Пинг;", "/turn_on;/test_ping");
-    msg.setInlineMenu(menu);
+
+    fb::Message msg("Menu", u.message().from().id());
+    fb::Menu menu;
+    menu.addButton(COMMANDS_TURN_ON).addButton(COMMANDS_LONG_PRESS).newRow();
+    menu.addButton(COMMANDS_START).addButton(COMMANDS_TEST_PING).addButton(COMMANDS_GET_CONFIG);
+    
+    msg.setMenu(menu);
+
     bot.sendMessage(msg);
+}
+
+void send_pong(fb::Update& u){
+    bot.sendMessage(fb::Message("Pong", u.message().from().id()));
 }
 
 void updateh(fb::Update& u) {
@@ -26,37 +77,32 @@ void updateh(fb::Update& u) {
     Serial.println(u.message().from().username());
     Serial.println(u.message().text());
 
-    if (u.isQuery()) {
-        Serial.println("NEW QUERY");
-        Serial.println(u.query().data());
-
-        // ответ на query
-        // bot.answerCallbackQuery(u.query().id());
-        bot.answerCallbackQuery(u.query().id(), u.query().data());
-        // bot.answerCallbackQuery(u.query().id(), u.query().data(), true);
-
-        if (u.query().data().compare("/test_ping")){
-            // press_button(u);
-            bot.sendMessage(fb::Message("Pong", u.message().from().id()));
-        }else if (u.query().data().compare("/turn_on")){
-            press_button(u);
-        }
-        send_menu(u);
-    }else{
-        if (u.message().text() == "/start"){
+    if (u.isMessage()){
+        if (u.message().text() == COMMANDS_START){
             send_menu(u);
+        } else if (u.message().text() == COMMANDS_TEST_PING){
+            send_pong(u);
+        } else if (u.message().text() == COMMANDS_TURN_ON){
+            press_button(u);
+        } else if (u.message().text() == COMMANDS_LONG_PRESS){
+            long_press_button(u);
+        } else if (u.message().text() == COMMANDS_GET_CONFIG){
+            send_config(u);
         }
     }
 }
 
 void setup() {
 
+    // setup hardware
     pinMode(OUTPUT_PIN, OUTPUT);
     digitalWrite(OUTPUT_PIN, LOW);
 
+    // setup serial
     Serial.begin(115200);
     Serial.println();
 
+    // setup wi-fi
     WiFi.begin(WIFI_SSID, WIFI_PASS);
     while (WiFi.status() != WL_CONNECTED) {
         delay(500);
@@ -64,23 +110,19 @@ void setup() {
     }
     Serial.println("Connected");
 
-    // ============
-    bot.attachUpdate(updateh);   // подключить обработчик обновлений
-    bot.setToken(F(BOT_TOKEN));  // установить токен
+    // setup preferences
+    preferences.begin("app", false);
+    init_config();
 
-    // режим опроса обновлений. Самый быстрый - Long
-    // особенности читай тут в самом низу
-    // https://github.com/GyverLibs/FastBot2/blob/main/docs/3.start.md
-
-    // bot.setPollMode(fb::Poll::Sync, 4000);  // умолч
-    // bot.setPollMode(fb::Poll::Async, 4000);
+    // setup bot
+    bot.attachUpdate(updateh); 
+    bot.setToken(F(BOT_TOKEN)); 
     bot.setPollMode(fb::Poll::Long, 20000);
 
-    // поприветствуем админа
-    bot.sendMessage(fb::Message("ESP32 Started", CHAT_ID));
+    // send admin message about device woke up
+    bot.sendMessage(fb::Message("ESP32 Started", ADMIN_CHAT_ID));
 }
 
 void loop() {
-    // вызывать тикер в loop
     bot.tick();
 }
