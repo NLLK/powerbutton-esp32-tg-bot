@@ -45,6 +45,24 @@ void long_press_button(fb::Update& u){
     bot.sendMessage(fb::Message("Кнопка нажата длительно", u.message().from().id()));
 }
 
+void set_language(fb::Update& u){
+    fb::Message msg("Choose language", u.message().from().id());
+
+    fb::Menu menu;
+    menu.addButton("EN").addButton("RU").addButton("BACK");
+    msg.setMenu(menu);
+
+    bot.sendMessage(msg);
+}
+
+void set_short_press_time(fb::Update& u){
+    
+}
+
+void set_long_press_time(fb::Update& u){
+    
+}
+
 void send_config(fb::Update& u){
     String str = "";
     str += "Is Configured: " + String(preferences.getBool(CONFIG_KEY_IS_CONFIGURED) ? "true" : "false") + "\n";
@@ -88,6 +106,12 @@ void updateh(fb::Update& u) {
             long_press_button(u);
         } else if (u.message().text() == COMMANDS_GET_CONFIG){
             send_config(u);
+        } else if (u.message().text() == COMMANDS_SET_LANGUAGE){
+            set_language(u);
+        } else if (u.message().text() == COMMANDS_SET_SHORT_PRESS_TIME){
+            set_short_press_time(u);
+        } else if (u.message().text() == COMMANDS_SET_LONG_PRESS_TIME){
+            set_long_press_time(u);
         }
     }
 }
@@ -118,6 +142,10 @@ void setup() {
     bot.attachUpdate(updateh); 
     bot.setToken(F(BOT_TOKEN)); 
     bot.setPollMode(fb::Poll::Long, 20000);
+
+    fb::MyCommands commands;
+    commands.addCommand(COMMANDS_START, "Меню");
+    bot.setMyCommands(commands);
 
     // send admin message about device woke up
     bot.sendMessage(fb::Message("ESP32 Started", ADMIN_CHAT_ID));
