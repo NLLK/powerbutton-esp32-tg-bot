@@ -1,10 +1,12 @@
 #include "main.h"
 
 bool security_filter_is_allowed(uint32_t userIdHash){
-    for (uint8_t i = 0; i < MAX_USERS_ALLOWED_TO_CONTROL; i++){
-        if (userIdHash == allowedUsers[i]){
-            return true;
-        }
+
+    if (userIdHash == HASH32(ADMIN_CHAT_ID)) return true; // To ensure admin always have the full access
+
+     if (auto search = allowedUsers.find(userIdHash);
+            search != allowedUsers.end()){
+        return true;
     }
 
     return false;

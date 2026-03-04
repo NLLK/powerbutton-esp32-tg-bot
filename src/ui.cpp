@@ -25,8 +25,8 @@ void send_config(fb::Update& u){
     str += "Lang: " + String(preferences.getUInt(CONFIG_KEY_LANGUAGE) == TRANSLATE_LANG_EN ? "EN" : "RU") + "\n";
 
     str += "Allowed users: \n";
-    for (int i = 0; i < MAX_USERS_ALLOWED_TO_CONTROL; i++){
-        str += String(allowedUsers[i]) + "\n";
+    for (uint32_t userHash : allowedUsers){
+        str += String(userHash) + "\n";
     }
     str += "You are: " + String(u.message().from().id().hash32());
 
@@ -41,7 +41,7 @@ void send_menu(fb::Update& u){
     fb::Menu menu;
     menu.addButton(COMMANDS_TURN_ON).addButton(COMMANDS_LONG_PRESS).newRow();
     menu.addButton(COMMANDS_START).addButton(COMMANDS_TEST_PING).newRow();
-    menu.addButton(COMMANDS_SET_SETTINGS).addButton(COMMANDS_GET_CONFIG);
+    menu.addButton(COMMANDS_SET_SETTINGS).addButton(COMMANDS_GET_CONFIG).addButton(COMMANDS_MANAGE_USERS);
     msg.setMenu(menu);
 
     bot.sendMessage(msg);
@@ -94,8 +94,11 @@ void parse_context_vise(fb::Update& u){
         } else {
             bot.sendMessage(fb::Message("Wrong value", u.message().from().id()));
         }   
+    }else if (context_hash == HASH32(COMMANDS_GAIN_ACCESS)){
+        send_gain_access_resp_handler(u);
+    }else if (context_hash == HASH32(COMMANDS_REVOKE_ACCESS)){
+        send_revoke_access_resp_handler(u);
     }
-
 }
 
 void not_allowed_users_menu(fb::Update& u){
@@ -129,6 +132,88 @@ void not_allowed_users_menu(fb::Update& u){
     }
 }
 
+
+void manage_users(fb::Update& u){
+    _set_context(u, COMMANDS_MANAGE_USERS);
+
+    fb::Message msg("User management", u.message().from().id());
+
+    fb::Menu menu;
+    menu.addButton(COMMANDS_GAIN_ACCESS).addButton(COMMANDS_CLEAR_WAIT_LIST).addButton(COMMANDS_REVOKE_ACCESS).addButton(COMMANDS_START_BACK);
+    msg.setMenu(menu);
+
+    bot.sendMessage(msg);
+}
+
+void send_clear_wait_list(fb::Update& u){
+    usersWaitingToGetAccessList.clear();
+
+    bot.sendMessage(fb::Message("Done", u.message().from().id()));
+}
+
+void send_revoke_access(fb::Update& u){
+    _set_context(u, COMMANDS_REVOKE_ACCESS);
+    fb::Message msg("Revoke user's permission to use this app.\nEnter user's code or select from menu", u.message().from().id());
+    fb::Menu menu;
+
+    for (uint32_t code : allowedUsers){
+
+        if (code == HASH32(ADMIN_CHAT_ID))
+            continue; // one would never like to remove admin's access
+
+        menu.addButton(String(code));
+    }
+
+    menu.addButton(COMMANDS_START_BACK);
+    msg.setMenu(menu);
+    bot.sendMessage(msg);
+}
+
+void send_revoke_access_resp_handler(fb::Update& u){
+    uint32_t value = u.message().text().toInt32();
+
+    if (auto search = allowedUsers.find(value);
+        search != allowedUsers.end()){
+        remove_allowed_user(value);
+
+        bot.sendMessage(fb::Message("Done", u.message().from().id()));
+        send_menu(u);
+    }else{
+        bot.sendMessage(fb::Message("This user never had access to this application", u.message().from().id()));
+    }
+}
+
+void send_gain_access(fb::Update& u){
+    _set_context(u, COMMANDS_GAIN_ACCESS);
+
+    fb::Message msg("Give access to a user by their code.\nEnter user's code or select from menu", u.message().from().id());
+    fb::Menu menu;
+
+    for (uint32_t code : usersWaitingToGetAccessList){
+        menu.addButton(String(code));
+    }
+
+    menu.addButton(COMMANDS_START_BACK);
+    msg.setMenu(menu);
+    bot.sendMessage(msg);
+}
+
+void send_gain_access_resp_handler(fb::Update& u){
+    uint32_t value = u.message().text().toInt32();
+
+    if (auto search = usersWaitingToGetAccessList.find(value);
+        search != usersWaitingToGetAccessList.end()){
+        usersWaitingToGetAccessList.erase(value);
+        append_allowed_user(value);
+
+        bot.sendMessage(fb::Message("Done", u.message().from().id()));
+        send_menu(u);
+    }else{
+        bot.sendMessage(fb::Message("This user never requested the access", u.message().from().id()));
+    }
+}
+
+
 void updateh(fb::Update& u){
     Serial.println("NEW MESSAGE");
     Serial.println(u.message().from().username());
@@ -159,6 +244,14 @@ void updateh(fb::Update& u){
             set_short_press_time(u);
         } else if (u.message().text().hash32() == su::Text(COMMANDS_SET_LONG_PRESS_TIME).hash32()){
             set_long_press_time(u);
+        } else if (u.message().text().hash32() == su::Text(COMMANDS_MANAGE_USERS).hash32()){
+            manage_users(u);
+        } else if (u.message().text().hash32() == su::Text(COMMANDS_GAIN_ACCESS).hash32()){
+            send_gain_access(u);
+        } else if (u.message().text().hash32() == su::Text(COMMANDS_CLEAR_WAIT_LIST).hash32()){
+            send_clear_wait_list(u);
+        } else if (u.message().text().hash32() == su::Text(COMMANDS_REVOKE_ACCESS).hash32()){
+            send_revoke_access(u);
         } else {
             parse_context_vise(u);
         }

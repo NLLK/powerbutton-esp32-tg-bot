@@ -5,8 +5,7 @@ FastBot2 bot;
 Preferences preferences;
 
 std::map<uint32_t, uint32_t> userMenuContext;
-uint32_t allowedUsers[MAX_USERS_ALLOWED_TO_CONTROL] = {HASH32(ADMIN_CHAT_ID), 0,};
-
+std::set<uint32_t> allowedUsers;
 std::set<uint32_t> usersWaitingToGetAccessList;
 
 void _set_context(fb::Update& u, const char* menu){
