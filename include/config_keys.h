@@ -4,3 +4,4 @@
 #define CONFIG_KEY_SHORT_PRESS_TIME "shrt_press_time"
 #define CONFIG_KEY_LONG_PRESS_TIME "long_press_time"
 #define CONFIG_KEY_LANGUAGE "lang"
+#define CONFIG_KEY_ALLOWED_USERS "allowed_users"

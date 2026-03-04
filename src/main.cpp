@@ -19,6 +19,7 @@
 #define LONG_PRESS_TIME_DEFAULT 10000U
 #define SHORT_PRESS_TIME_DEFAULT 500U
 #define LANG_DEFAULT TRANSLATE_LANG_EN
+#define MAX_USERS_ALLOWED_TO_CONTROL 5
 
 //macros
 #define HASH32(str) Text(str).hash32()
@@ -28,6 +29,7 @@ FastBot2 bot;
 Preferences preferences;
 
 std::map<uint32_t, uint32_t> userMenuContext;
+uint32_t allowedUsers[MAX_USERS_ALLOWED_TO_CONTROL] = {HASH32(ADMIN_CHAT_ID), 0,};
 
 void _set_context(fb::Update& u, const char* menu){
     userMenuContext[u.message().from().id().hash32()] = HASH32(menu);
@@ -40,7 +42,11 @@ void init_config(){
         preferences.putUInt(CONFIG_KEY_SHORT_PRESS_TIME, SHORT_PRESS_TIME_DEFAULT);
         preferences.putUInt(CONFIG_KEY_LONG_PRESS_TIME, LONG_PRESS_TIME_DEFAULT);
         preferences.putUInt(CONFIG_KEY_LANGUAGE, LANG_DEFAULT);
+        allowedUsers[0] = HASH32(ADMIN_CHAT_ID);
+        preferences.putBytes(CONFIG_KEY_ALLOWED_USERS, (byte*)&allowedUsers, sizeof(allowedUsers));
     }
+
+    preferences.getBytes(CONFIG_KEY_ALLOWED_USERS, (byte*)&allowedUsers, sizeof(allowedUsers));
 }
 
 void press_button(fb::Update& u){
@@ -55,6 +61,12 @@ void long_press_button(fb::Update& u){
     delay(preferences.getUInt(CONFIG_KEY_LONG_PRESS_TIME));
     digitalWrite(OUTPUT_PIN, LOW);
     bot.sendMessage(fb::Message("Кнопка нажата длительно", u.message().from().id()));
+}
+
+void set_commands_list(){
+    fb::MyCommands commands;
+    commands.addCommand(COMMANDS_START, "Меню");
+    bot.setMyCommands(commands);
 }
 
 void set_settings(fb::Update& u){
@@ -233,9 +245,7 @@ void setup() {
     bot.setToken(F(BOT_TOKEN)); 
     bot.setPollMode(fb::Poll::Long, 20000);
 
-    fb::MyCommands commands;
-    commands.addCommand(COMMANDS_START, "Меню");
-    bot.setMyCommands(commands);
+    set_commands_list();
 
     // send admin message about device woke up
     bot.sendMessage(fb::Message("ESP32 Started", ADMIN_CHAT_ID));
