@@ -9,10 +9,11 @@
 #include <FastBot2.h>
 
 // local includes
+#include "main.h"
 #include "env.h"
-#include "commands.h"
-#include "config_keys.h"
-#include "translate.h"
+#include "const/commands.h"
+#include "const/config_keys.h"
+#include "const/translate.h"
 
 // local defines
 #define OUTPUT_PIN GPIO_NUM_0
