@@ -9,6 +9,7 @@ void init_config(){
         preferences.putUInt(CONFIG_KEY_LANGUAGE, LANG_DEFAULT);
         allowedUsers[0] = HASH32(ADMIN_CHAT_ID);
         preferences.putBytes(CONFIG_KEY_ALLOWED_USERS, (byte*)&allowedUsers, sizeof(allowedUsers));
+        preferences.putBool(CONFIG_KEY_IS_CONFIGURED, true);
     }
 
     preferences.getBytes(CONFIG_KEY_ALLOWED_USERS, (byte*)&allowedUsers, sizeof(allowedUsers));

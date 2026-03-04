@@ -6,6 +6,7 @@
 
 // std includes
 #include <map>
+#include <set>
 
 // library includes
 #include <FastBot2.h>
@@ -23,6 +24,7 @@
 #define SHORT_PRESS_TIME_DEFAULT 500U
 #define LANG_DEFAULT TRANSLATE_LANG_EN
 #define MAX_USERS_ALLOWED_TO_CONTROL 5
+#define MAX_USERS_IN_WAIT_LIST 5
 
 //macros
 #define HASH32(str) Text(str).hash32()
@@ -33,6 +35,7 @@ extern Preferences preferences;
 
 extern std::map<uint32_t, uint32_t> userMenuContext;
 extern uint32_t allowedUsers[MAX_USERS_ALLOWED_TO_CONTROL];
+extern std::set<uint32_t> usersWaitingToGetAccessList;
 
 //hardware
 void init_hardware();
@@ -52,11 +55,15 @@ void set_settings(fb::Update& u);
 void send_config(fb::Update& u);
 void send_menu(fb::Update& u);
 void send_pong(fb::Update& u);
+void not_allowed_users_menu(fb::Update& u);
 
 //bot
 void parse_context_vise(fb::Update& u);
 void updateh(fb::Update& u);
 void set_commands_list();
+
+// securiry
+bool security_filter_is_allowed(uint32_t userIdHash);
 
 //common
 void _set_context(fb::Update& u, const char* menu);

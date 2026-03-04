@@ -24,6 +24,12 @@ void send_config(fb::Update& u){
     str += "Long press time: " + String(preferences.getUInt(CONFIG_KEY_LONG_PRESS_TIME)) + "\n";
     str += "Lang: " + String(preferences.getUInt(CONFIG_KEY_LANGUAGE) == TRANSLATE_LANG_EN ? "EN" : "RU") + "\n";
 
+    str += "Allowed users: \n";
+    for (int i = 0; i < MAX_USERS_ALLOWED_TO_CONTROL; i++){
+        str += String(allowedUsers[i]) + "\n";
+    }
+    str += "You are: " + String(u.message().from().id().hash32());
+
     fb::Message msg(str, u.message().from().id());
     bot.sendMessage(msg);
 }
@@ -92,10 +98,46 @@ void parse_context_vise(fb::Update& u){
 
 }
 
+void not_allowed_users_menu(fb::Update& u){
+    if (u.isMessage()){
+
+        if (usersWaitingToGetAccessList.size() > MAX_USERS_IN_WAIT_LIST){
+            bot.sendMessage(fb::Message("Too many users trying to get access. Ask administrator to clear waiting list", u.message().from().id()));
+            return;
+        }
+
+        if (u.message().text().hash32() == su::Text(COMMANDS_START).hash32()){
+            fb::Message msg("Menu", u.message().from().id());
+            fb::Menu menu;
+            menu.addButton(COMMANDS_ASK_TO_GAIN_ACCESS);
+            msg.setMenu(menu);
+
+            bot.sendMessage(msg);
+        } else if (u.message().text().hash32() == su::Text(COMMANDS_ASK_TO_GAIN_ACCESS).hash32()){
+            uint32_t user_hash = u.message().from().id().hash32();
+
+            if (auto search = usersWaitingToGetAccessList.find(user_hash);
+                 search != usersWaitingToGetAccessList.end()){
+                return;
+            }else{
+                usersWaitingToGetAccessList.insert(user_hash);
+            }
+
+            bot.sendMessage(fb::Message(Text(String("Access requested. Wait for admin to give you an access. Tell them this code: ")
+                + String(user_hash)), u.message().from().id()));
+        }
+    }
+}
+
 void updateh(fb::Update& u){
     Serial.println("NEW MESSAGE");
     Serial.println(u.message().from().username());
     Serial.println(u.message().text());
+
+    if (!security_filter_is_allowed(u.message().from().id().hash32())){
+        not_allowed_users_menu(u);
+        return;
+    }
 
     if (u.isMessage()){
         if (u.message().text().hash32() == su::Text(COMMANDS_START).hash32() 
