@@ -128,6 +128,11 @@ void not_allowed_users_menu(fb::Update& u){
 
             bot.sendMessage(fb::Message(Text(String("Access requested. Wait for admin to give you an access. Tell them this code: ")
                 + String(user_hash)), u.message().from().id()));
+
+            bot.sendMessage(fb::Message(
+                Text(String("Some user required access to this app. They should tell you this this code: ") + String(user_hash) 
+                + String(".\nIn case you want to authorize this user, use this command ") + String(COMMANDS_GAIN_ACCESS)),
+                ADMIN_CHAT_ID));
         }
     }
 }
@@ -212,7 +217,6 @@ void send_gain_access_resp_handler(fb::Update& u){
         bot.sendMessage(fb::Message("This user never requested the access", u.message().from().id()));
     }
 }
-
 
 void updateh(fb::Update& u){
     Serial.println("NEW MESSAGE");
