@@ -58,21 +58,6 @@ void not_allowed_users_menu(fb::Update& u){
     }
 }
 
-void send_gain_access_resp_handler(fb::Update& u){
-    uint32_t value = u.message().text().toInt32();
-
-    if (auto search = usersWaitingToGetAccessList.find(value);
-        search != usersWaitingToGetAccessList.end()){
-        usersWaitingToGetAccessList.erase(value);
-        append_allowed_user(value);
-
-        bot.sendMessage(fb::Message("Done", u.message().from().id()));
-        handle_send_menu_req(u);
-    }else{
-        bot.sendMessage(fb::Message("This user never requested the access", u.message().from().id()));
-    }
-}
-
 void updateh(fb::Update& u){
     Serial.println("NEW MESSAGE");
     Serial.println(u.message().from().username());
@@ -90,11 +75,9 @@ void updateh(fb::Update& u){
         } else if (u.message().text().hash32() == su::Text(COMMANDS_TEST_PING).hash32()){
             handle_send_pong_req(u);
         } else if (u.message().text().hash32() == su::Text(COMMANDS_TURN_ON).hash32()){
-            press_button(u);
-            bot.sendMessage(fb::Message("Кнопка нажата кратко", u.message().from().id()));
+            handle_press_button_req(u);
         } else if (u.message().text().hash32() == su::Text(COMMANDS_LONG_PRESS).hash32()){
-            long_press_button(u);
-            bot.sendMessage(fb::Message("Кнопка нажата длительно", u.message().from().id()));
+            handle_long_press_button_req(u);
         } else if (u.message().text().hash32() == su::Text(COMMANDS_GET_CONFIG).hash32()){
             handle_send_config_req(u);
         } else if (u.message().text().hash32() == su::Text(COMMANDS_SET_SETTINGS).hash32()){

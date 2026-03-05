@@ -20,19 +20,19 @@ void handle_send_pong_req(fb::Update& u){
 //
 // hardware
 //
-
 void handle_press_button_req(fb::Update& u){
-
+    press_button();
+    bot.sendMessage(fb::Message("Кнопка нажата кратко", u.message().from().id()));
 }
 
 void handle_long_press_button_req(fb::Update& u){
-
+    long_press_button();
+    bot.sendMessage(fb::Message("Кнопка нажата длительно", u.message().from().id()));
 }
 
 //
 // config
 //
-
 void handle_set_settings_req(fb::Update& u){
     fb::Message msg("Settings", u.message().from().id());
 
@@ -44,8 +44,9 @@ void handle_set_settings_req(fb::Update& u){
     bot.sendMessage(msg);
 }
 
-String str = "";
 void handle_send_config_req(fb::Update& u){
+    String str = "";
+
     str += "Is Configured: " + String(preferences.getBool(CONFIG_KEY_IS_CONFIGURED) ? "true" : "false") + "\n";
     str += "Short press time: " + String(preferences.getUInt(CONFIG_KEY_SHORT_PRESS_TIME)) + "\n";
     str += "Long press time: " + String(preferences.getUInt(CONFIG_KEY_LONG_PRESS_TIME)) + "\n";
@@ -173,7 +174,18 @@ void handle_give_access_req(fb::Update& u){
 }
 
 void handle_give_access_resp(fb::Update& u){
+    uint32_t value = u.message().text().toInt32();
 
+    if (auto search = usersWaitingToGetAccessList.find(value);
+        search != usersWaitingToGetAccessList.end()){
+        usersWaitingToGetAccessList.erase(value);
+        append_allowed_user(value);
+
+        bot.sendMessage(fb::Message("Done", u.message().from().id()));
+        handle_send_menu_req(u);
+    }else{
+        bot.sendMessage(fb::Message("This user never requested the access", u.message().from().id()));
+    }
 }
 
 void handle_revoke_access_req(fb::Update& u){
