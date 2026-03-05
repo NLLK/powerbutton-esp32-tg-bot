@@ -11,6 +11,7 @@
 
 void handle_send_menu_req(fb::Update& u);
 void handle_send_pong_req(fb::Update& u);
+void handle_send_help_info_req(fb::Update& u);
 
 void handle_press_button_req(fb::Update& u);
 void handle_long_press_button_req(fb::Update& u);

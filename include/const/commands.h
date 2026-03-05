@@ -5,6 +5,7 @@
 #define COMMANDS_START "/start"
 #define COMMANDS_TEST_PING "/test_ping"
 #define COMMANDS_GET_CONFIG "/get_config"
+#define COMMANDS_HELP "/help"
 
 #define COMMANDS_SET_SETTINGS "/set_settings"
 #define COMMANDS_SET_LANGUAGE "/set_lang"

@@ -2,7 +2,8 @@
 
 void set_commands_list(){
     fb::MyCommands commands;
-    commands.addCommand(COMMANDS_START, "Меню");
+    commands.addCommand(COMMANDS_START, context_vise_translate_get_msg(Dictionary::MENU));
+    commands.addCommand(COMMANDS_HELP, context_vise_translate_get_msg(Dictionary::HELP));
     bot.setMyCommands(commands);
 }
 
@@ -11,6 +12,7 @@ void parse_context_vise(fb::Update& u){
 
     if (context_hash == HASH32(COMMANDS_SET_LANGUAGE)){
         handle_set_language_resp(u);
+        set_commands_list();
     }else if (context_hash == HASH32(COMMANDS_SET_SHORT_PRESS_TIME)){
         handle_set_short_press_time_resp(u);
     }else if (context_hash == HASH32(COMMANDS_SET_LONG_PRESS_TIME)){
@@ -96,6 +98,8 @@ void updateh(fb::Update& u){
             handle_clear_wait_list_req(u);
         } else if (u.message().text().hash32() == su::Text(COMMANDS_REVOKE_ACCESS).hash32()){
             handle_revoke_access_req(u);
+        } else if (u.message().text().hash32() == su::Text(COMMANDS_HELP).hash32()){
+            handle_send_help_info_req(u);
         } else {
             parse_context_vise(u);
         }

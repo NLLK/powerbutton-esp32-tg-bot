@@ -61,3 +61,7 @@ void init_config(){
 
     load_allowed_users();
 }
+
+const char* context_vise_translate_get_msg(Dictionary message){
+    return translate_getMessage((TRANSLATE_LANGUAGE)preferences.getUInt(CONFIG_KEY_LANGUAGE), message);
+}
