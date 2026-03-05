@@ -1,4 +1,4 @@
-#include "main.h"
+#include "security.h"
 
 bool security_filter_is_allowed(uint32_t userIdHash){
 

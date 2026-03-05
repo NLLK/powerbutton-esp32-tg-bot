@@ -52,6 +52,8 @@ void init_config(){
         preferences.putUInt(CONFIG_KEY_SHORT_PRESS_TIME, SHORT_PRESS_TIME_DEFAULT);
         preferences.putUInt(CONFIG_KEY_LONG_PRESS_TIME, LONG_PRESS_TIME_DEFAULT);
         preferences.putUInt(CONFIG_KEY_LANGUAGE, LANG_DEFAULT);
+        preferences.putBool(CONFIG_KEY_SEND_ADMIN_MSG_ON_OTHER_USERS_POWER_ON, SEND_ADMIN_MSG_ON_OTHER_USERS_POWER_ON_DEFAULT);
+
         append_allowed_user(HASH32(ADMIN_CHAT_ID));
 
         preferences.putBool(CONFIG_KEY_IS_CONFIGURED, true);

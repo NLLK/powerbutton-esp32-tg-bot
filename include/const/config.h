@@ -1,0 +1,17 @@
+#pragma once
+
+// default parameters
+#define LONG_PRESS_TIME_DEFAULT 10000U
+#define SHORT_PRESS_TIME_DEFAULT 500U
+#define LANG_DEFAULT TRANSLATE_LANG_EN
+#define MAX_USERS_ALLOWED_TO_CONTROL 5
+#define MAX_USERS_IN_WAIT_LIST 5
+#define SEND_ADMIN_MSG_ON_OTHER_USERS_POWER_ON_DEFAULT true
+
+// config keys
+#define CONFIG_KEY_IS_CONFIGURED "is_configured"
+#define CONFIG_KEY_SHORT_PRESS_TIME "shrt_press_time"
+#define CONFIG_KEY_LONG_PRESS_TIME "long_press_time"
+#define CONFIG_KEY_LANGUAGE "lang"
+#define CONFIG_KEY_ALLOWED_USERS "allowed_users"
+#define CONFIG_KEY_SEND_ADMIN_MSG_ON_OTHER_USERS_POWER_ON "msg_adm_pwron"
