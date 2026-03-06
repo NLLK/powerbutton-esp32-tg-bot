@@ -22,6 +22,11 @@ enum class Dictionary{
     USER_NEVER_REQUESTED_ACCESS,
     REVOKE_ACCESS,
     USER_DOESNT_HAVE_ACCESS_TO_THIS_APP,
+    HELP_INFO,
+    TOO_MANY_USERS_TRYING_TO_GET_ACCESS,
+    ACCESS_REQUESTED,
+    ACCESS_REQUESTED_MESSAGE_ADMIN,
+    HELP_INFO_UNREGISTERED,
 
     DICTIONARY_COUNT
 };
@@ -42,6 +47,11 @@ const char* const en_strings[] PROGMEM = {
     "This user never requested the access",//USER_NEVER_REQUESTED_ACCESS
     "Revoke user's permission to use this app.\nEnter user's code or select from menu",//REVOKE_ACCESS
     "This user doesn't have access to this application",//USER_DOESNT_HAVE_ACCESS_TO_THIS_APP
+    "Welcome to the Turn On My PC bot!\nThe command list is:\n\n/start - show menu;\n/help - show this message",//HELP_INFO
+    "Too many users trying to get access. Ask administrator to clear waiting list",//TOO_MANY_USERS_TRYING_TO_GET_ACCESS
+    "Access requested. Wait for admin to give you an access. Tell them this code: %s",//ACCESS_REQUESTED
+    "Some user required access to this app. They should tell you this this code: %s.\nIn case you want to authorize this user, use this command %s",//ACCESS_REQUESTED_MESSAGE_ADMIN
+    "Welcome to the Turn On My PC bot!\nCurrently you have no access to use any of commands but these:\n\n/start - show menu;\n/help - show this message",//HELP_INFO_UNREGISTERED
 };
 
 const char* const ru_strings[] PROGMEM = {
@@ -60,6 +70,11 @@ const char* const ru_strings[] PROGMEM = {
     "Данный пользователь не запрашивал доступ к приложению",//USER_NEVER_REQUESTED_ACCESS
     "Отзовите разрешение пользоваться приложением у пользователя.\nВведите код доступа пользователя, или выберите из меню",//REVOKE_ACCESS
     "У этого пользователя нет доступа к приложению",//USER_DOESNT_HAVE_ACCESS_TO_THIS_APP
+    "Добро пожаловать в бот Turn On My PC!\nСписок команд следующий:\n\n/start - показать меню;\n/help - показать это сообщение",//HELP_INFO
+    "Слишком много пользователей пытается получить доступ. Попросите администратора очистить список ожидания",//TOO_MANY_USERS_TRYING_TO_GET_ACCESS
+    "Доступ запрошен. Ожидайте пока администратор выдаст вам доступ. Назовите ему этот код: %s",//ACCESS_REQUESTED
+    "Кто-то запросил доступ в приложение. Они скажут вам этот код: %s.\nВ случае, если вы хотите разрешить этому пользователю доступ в приложение, воспользуйтесь этой командой: %s",//ACCESS_REQUESTED_MESSAGE_ADMIN
+    "Добро пожаловать в бот Turn On My PC!\nВ данный момент, у вас нет доступа к приложению и вы можете только использовать эти команды:\n\n/start - показать меню;\n/help - показать это сообщение",//HELP_INFO_UNREGISTERED
 };
 
 const char* const* const strings[TRANSLATE_LANG_COUNT] PROGMEM = {

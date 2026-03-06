@@ -27,13 +27,14 @@ void parse_context_vise(fb::Update& u){
 void not_allowed_users_menu(fb::Update& u){
     if (u.isMessage()){
 
-        if (usersWaitingToGetAccessList.size() > MAX_USERS_IN_WAIT_LIST){
-            bot.sendMessage(fb::Message("Too many users trying to get access. Ask administrator to clear waiting list", u.message().from().id()));
-            return;
-        }
 
-        if (u.message().text().hash32() == su::Text(COMMANDS_START).hash32()){
-            fb::Message msg("Menu", u.message().from().id());
+        if (u.message().text().hash32() == HASH32(COMMANDS_HELP)){
+            bot.sendMessage(fb::Message(context_vise_translate_get_msg(Dictionary::HELP_INFO_UNREGISTERED),
+                u.message().from().id())
+            );
+        } else if (u.message().text().hash32() == su::Text(COMMANDS_START).hash32()){
+            fb::Message msg(context_vise_translate_get_msg(Dictionary::MENU),
+                u.message().from().id());
             fb::Menu menu;
             menu.addButton(COMMANDS_REQUEST_ACCESS);
             msg.setMenu(menu);
@@ -46,16 +47,28 @@ void not_allowed_users_menu(fb::Update& u){
                  search != usersWaitingToGetAccessList.end()){
                 return;
             }else{
+                if (usersWaitingToGetAccessList.size() > MAX_USERS_IN_WAIT_LIST){
+                    bot.sendMessage(fb::Message(context_vise_translate_get_msg(Dictionary::TOO_MANY_USERS_TRYING_TO_GET_ACCESS),
+                        u.message().from().id())
+                    );
+                    return;
+                }
                 usersWaitingToGetAccessList.insert(user_hash);
             }
 
-            bot.sendMessage(fb::Message(Text(String("Access requested. Wait for admin to give you an access. Tell them this code: ")
-                + String(user_hash)), u.message().from().id()));
+            bot.sendMessage(fb::Message(
+                utils_formatString(
+                    context_vise_translate_get_msg(Dictionary::ACCESS_REQUESTED),
+                        u.message().from().id().hash32()
+                ), u.message().from().id())
+            );
 
             bot.sendMessage(fb::Message(
-                Text(String("Some user required access to this app. They should tell you this this code: ") + String(user_hash) 
-                + String(".\nIn case you want to authorize this user, use this command ") + String(COMMANDS_GIVE_ACCESS)),
-                ADMIN_CHAT_ID));
+                utils_formatString(
+                    context_vise_translate_get_msg(Dictionary::ACCESS_REQUESTED_MESSAGE_ADMIN),
+                        String(user_hash), String(COMMANDS_GIVE_ACCESS)
+                ), ADMIN_CHAT_ID)
+            );
         }
     }
 }
