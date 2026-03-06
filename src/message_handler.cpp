@@ -26,8 +26,6 @@ void parse_context_vise(fb::Update& u){
 
 void not_allowed_users_menu(fb::Update& u){
     if (u.isMessage()){
-
-
         if (u.message().text().hash32() == HASH32(COMMANDS_HELP)){
             bot.sendMessage(fb::Message(context_vise_translate_get_msg(Dictionary::HELP_INFO_UNREGISTERED),
                 u.message().from().id())
@@ -59,14 +57,14 @@ void not_allowed_users_menu(fb::Update& u){
             bot.sendMessage(fb::Message(
                 utils_formatString(
                     context_vise_translate_get_msg(Dictionary::ACCESS_REQUESTED),
-                        u.message().from().id().hash32()
+                        String(u.message().from().id().hash32())
                 ), u.message().from().id())
             );
 
             bot.sendMessage(fb::Message(
                 utils_formatString(
                     context_vise_translate_get_msg(Dictionary::ACCESS_REQUESTED_MESSAGE_ADMIN),
-                        String(user_hash), String(COMMANDS_GIVE_ACCESS)
+                        String(user_hash), COMMANDS_GIVE_ACCESS
                 ), ADMIN_CHAT_ID)
             );
         }

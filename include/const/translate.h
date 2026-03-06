@@ -51,7 +51,7 @@ const char* const en_strings[] PROGMEM = {
     "Too many users trying to get access. Ask administrator to clear waiting list",//TOO_MANY_USERS_TRYING_TO_GET_ACCESS
     "Access requested. Wait for admin to give you an access. Tell them this code: %s",//ACCESS_REQUESTED
     "Some user required access to this app. They should tell you this this code: %s.\nIn case you want to authorize this user, use this command %s",//ACCESS_REQUESTED_MESSAGE_ADMIN
-    "Welcome to the Turn On My PC bot!\nCurrently you have no access to use any of commands but these:\n\n/start - show menu;\n/help - show this message",//HELP_INFO_UNREGISTERED
+    "Welcome to the Turn On My PC bot!\nCurrently you have no access to use any of commands but these:\n\n/start - show menu;\n/help - show this message;\n/request_access - request access",//HELP_INFO_UNREGISTERED
 };
 
 const char* const ru_strings[] PROGMEM = {
@@ -74,7 +74,7 @@ const char* const ru_strings[] PROGMEM = {
     "Слишком много пользователей пытается получить доступ. Попросите администратора очистить список ожидания",//TOO_MANY_USERS_TRYING_TO_GET_ACCESS
     "Доступ запрошен. Ожидайте пока администратор выдаст вам доступ. Назовите ему этот код: %s",//ACCESS_REQUESTED
     "Кто-то запросил доступ в приложение. Они скажут вам этот код: %s.\nВ случае, если вы хотите разрешить этому пользователю доступ в приложение, воспользуйтесь этой командой: %s",//ACCESS_REQUESTED_MESSAGE_ADMIN
-    "Добро пожаловать в бот Turn On My PC!\nВ данный момент, у вас нет доступа к приложению и вы можете только использовать эти команды:\n\n/start - показать меню;\n/help - показать это сообщение",//HELP_INFO_UNREGISTERED
+    "Добро пожаловать в бот Turn On My PC!\nВ данный момент, у вас нет доступа к приложению и вы можете только использовать эти команды:\n\n/start - показать меню;\n/help - показать это сообщение;\n/request_access - запросить доступ",//HELP_INFO_UNREGISTERED
 };
 
 const char* const* const strings[TRANSLATE_LANG_COUNT] PROGMEM = {
