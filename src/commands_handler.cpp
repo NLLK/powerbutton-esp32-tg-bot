@@ -114,8 +114,8 @@ void handle_set_short_press_time_req(fb::Update& u){
     _set_context(u, COMMANDS_SET_SHORT_PRESS_TIME);
 
     fb::Message msg(utils_formatString(
-        context_vise_translate_get_msg(Dictionary::REQUEST_SHORT_PRESS_TIME_FMT), 100, 5000)
-        , u.message().from().id());
+        context_vise_translate_get_msg(Dictionary::REQUEST_SHORT_PRESS_TIME_FMT), SHORT_PRESS_TIME_MIN, SHORT_PRESS_TIME_MAX),
+            u.message().from().id());
     fb::Menu menu;
     menu.addButton(COMMANDS_START_BACK);
     msg.setMenu(menu);
@@ -125,7 +125,7 @@ void handle_set_short_press_time_req(fb::Update& u){
 void handle_set_short_press_time_resp(fb::Update& u){
     uint32_t value = u.message().text().toInt32();
 
-    if (value > 100 && value < 5000){
+    if (value >= SHORT_PRESS_TIME_MIN && value <= SHORT_PRESS_TIME_MAX){
         preferences.putUInt(CONFIG_KEY_SHORT_PRESS_TIME, value);
 
         bot.sendMessage(fb::Message(context_vise_translate_get_msg(Dictionary::DONE), u.message().from().id()));
@@ -140,8 +140,8 @@ void handle_set_long_press_time_req(fb::Update& u){
     _set_context(u, COMMANDS_SET_LONG_PRESS_TIME);
 
     fb::Message msg(utils_formatString(
-        context_vise_translate_get_msg(Dictionary::REQUEST_LONG_PRESS_TIME_FMT), 100, 20000)
-        , u.message().from().id());
+        context_vise_translate_get_msg(Dictionary::REQUEST_LONG_PRESS_TIME_FMT), LONG_PRESS_TIME_MIN, LONG_PRESS_TIME_MAX),
+            u.message().from().id());
     fb::Menu menu;
     menu.addButton(COMMANDS_START_BACK);
     msg.setMenu(menu);
@@ -151,7 +151,7 @@ void handle_set_long_press_time_req(fb::Update& u){
 void handle_set_long_press_time_resp(fb::Update& u){
     uint32_t value = u.message().text().toInt32();
 
-    if (value > 100 && value < 20000){
+    if (value >= LONG_PRESS_TIME_MIN && value <= LONG_PRESS_TIME_MAX){
         preferences.putUInt(CONFIG_KEY_LONG_PRESS_TIME, value);
 
         bot.sendMessage(fb::Message(context_vise_translate_get_msg(Dictionary::DONE), u.message().from().id()));
