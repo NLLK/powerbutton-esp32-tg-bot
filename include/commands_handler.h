@@ -24,6 +24,8 @@ void handle_set_short_press_time_req(fb::Update& u);
 void handle_set_short_press_time_resp(fb::Update& u);
 void handle_set_long_press_time_req(fb::Update& u);
 void handle_set_long_press_time_resp(fb::Update& u);
+void handle_set_msg_admin_power_on_req(fb::Update& u);
+void handle_set_msg_adming_power_on_resp(fb::Update& u);
 
 void handle_manage_users_req(fb::Update& u);
 void handle_give_access_req(fb::Update& u);

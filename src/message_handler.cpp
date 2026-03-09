@@ -21,6 +21,8 @@ void parse_context_vise(fb::Update& u){
         handle_give_access_resp(u);
     }else if (context_hash == HASH32(COMMANDS_REVOKE_ACCESS)){
         handle_revoke_access_resp(u);
+    }else if (context_hash == HASH32(COMMANDS_SET_MSG_ADMIN_POWER_ON)){
+        handle_set_msg_adming_power_on_resp(u);
     }
 }
 
@@ -57,14 +59,14 @@ void not_allowed_users_menu(fb::Update& u){
             bot.sendMessage(fb::Message(
                 utils_formatString(
                     context_vise_translate_get_msg(Dictionary::ACCESS_REQUESTED),
-                        String(u.message().from().id().hash32())
+                        utils_getCodeFromUsersID(user_hash)
                 ), u.message().from().id())
             );
 
             bot.sendMessage(fb::Message(
                 utils_formatString(
                     context_vise_translate_get_msg(Dictionary::ACCESS_REQUESTED_MESSAGE_ADMIN),
-                        String(user_hash), COMMANDS_GIVE_ACCESS
+                        utils_getCodeFromUsersID(user_hash), COMMANDS_GIVE_ACCESS
                 ), ADMIN_CHAT_ID)
             );
         }
@@ -101,6 +103,8 @@ void updateh(fb::Update& u){
             handle_set_short_press_time_req(u);
         } else if (u.message().text().hash32() == su::Text(COMMANDS_SET_LONG_PRESS_TIME).hash32()){
             handle_set_long_press_time_req(u);
+        } else if (u.message().text().hash32() == su::Text(COMMANDS_SET_MSG_ADMIN_POWER_ON).hash32()){
+            handle_set_msg_admin_power_on_req(u);
         } else if (u.message().text().hash32() == su::Text(COMMANDS_MANAGE_USERS).hash32()){
             handle_manage_users_req(u);
         } else if (u.message().text().hash32() == su::Text(COMMANDS_GIVE_ACCESS).hash32()){

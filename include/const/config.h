@@ -13,6 +13,7 @@
 #define SEND_ADMIN_MSG_ON_OTHER_USERS_POWER_ON_DEFAULT true
 
 // config keys
+#define CONFIG_KEY_APP_NAME "app"
 #define CONFIG_KEY_IS_CONFIGURED "is_configured"
 #define CONFIG_KEY_SHORT_PRESS_TIME "shrt_press_time"
 #define CONFIG_KEY_LONG_PRESS_TIME "long_press_time"

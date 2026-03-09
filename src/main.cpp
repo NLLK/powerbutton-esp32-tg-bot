@@ -18,7 +18,7 @@ void setup() {
     Serial.println("Connected");
 
     // setup preferences
-    preferences.begin("app", false);
+    preferences.begin(CONFIG_KEY_APP_NAME, false);
     init_config();
 
     // setup bot

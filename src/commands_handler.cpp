@@ -19,7 +19,8 @@ void handle_send_pong_req(fb::Update& u){
 }
 
 void handle_send_help_info_req(fb::Update& u){
-    bot.sendMessage(fb::Message("Help", u.message().from().id()));
+    bot.sendMessage(fb::Message(context_vise_translate_get_msg(Dictionary::HELP_INFO),
+        u.message().from().id()));
 }
 
 //
@@ -30,7 +31,16 @@ void handle_press_button_req(fb::Update& u){
     bot.sendMessage(fb::Message(context_vise_translate_get_msg(Dictionary::BUTTON_PRESSED_SHORT),
         u.message().from().id()));
 
-    //TODO: message admin on button use
+    if (preferences.getBool(CONFIG_KEY_SEND_ADMIN_MSG_ON_OTHER_USERS_POWER_ON) &&
+        u.message().from().id().hash32() != HASH32(ADMIN_CHAT_ID)){
+        bot.sendMessage(fb::Message(
+                utils_formatString(
+                    context_vise_translate_get_msg(Dictionary::NOTIFY_ADMIN_ON_OTHERS_INTERACT),
+                    u.message().from().id().hash32()
+                ),
+            u.message().from().id())
+        );
+    }
 }
 
 void handle_long_press_button_req(fb::Update& u){
@@ -38,7 +48,16 @@ void handle_long_press_button_req(fb::Update& u){
     bot.sendMessage(fb::Message(context_vise_translate_get_msg(Dictionary::BUTTON_PRESSED_LONG),
         u.message().from().id()));
 
-    //TODO: message admin on button use
+    if (preferences.getBool(CONFIG_KEY_SEND_ADMIN_MSG_ON_OTHER_USERS_POWER_ON) && 
+        u.message().from().id().hash32() != HASH32(ADMIN_CHAT_ID)){
+        bot.sendMessage(fb::Message(
+                utils_formatString(
+                    context_vise_translate_get_msg(Dictionary::NOTIFY_ADMIN_ON_OTHERS_INTERACT),
+                    u.message().from().id().hash32()
+                ),
+            u.message().from().id())
+        );
+    }
 }
 
 //
@@ -49,8 +68,8 @@ void handle_set_settings_req(fb::Update& u){
         u.message().from().id());
 
     fb::Menu menu;
-    menu.addButton(COMMANDS_SET_LANGUAGE).addButton(COMMANDS_SET_SHORT_PRESS_TIME)
-        .addButton(COMMANDS_SET_LONG_PRESS_TIME).addButton(COMMANDS_START_BACK);
+    menu.addButton(COMMANDS_SET_LANGUAGE).addButton(COMMANDS_SET_MSG_ADMIN_POWER_ON).newRow()
+        .addButton(COMMANDS_SET_SHORT_PRESS_TIME).addButton(COMMANDS_SET_LONG_PRESS_TIME).addButton(COMMANDS_START_BACK);
     msg.setMenu(menu);
 
     bot.sendMessage(msg);
@@ -63,14 +82,15 @@ void handle_send_config_req(fb::Update& u){
     str += "*Short press time:* " + String(preferences.getUInt(CONFIG_KEY_SHORT_PRESS_TIME)) + "\n";
     str += "*Long press time:* " + String(preferences.getUInt(CONFIG_KEY_LONG_PRESS_TIME)) + "\n";
     str += "*Lang:* " + String(preferences.getUInt(CONFIG_KEY_LANGUAGE) == TRANSLATE_LANG_EN ? "EN" : "RU") + "\n";
+    str += "*Msg Adm Pwron:* " + String(preferences.getBool(CONFIG_KEY_SEND_ADMIN_MSG_ON_OTHER_USERS_POWER_ON) ? "true" : "false") + "\n";
     str += "\n";
     str += "*Allowed users:* \n";
     for (uint32_t userHash : allowedUsers){
         if (userHash == 0)
             continue;
-        str += String(userHash) + "\n";
+        str += utils_getCodeFromUsersID(userHash) + "\n";
     }
-    str += "You are: " + String(u.message().from().id().hash32());
+    str += "You are: " + utils_getCodeFromUsersID(u.message().from().id().hash32());
 
     fb::Message msg(str, u.message().from().id());
     msg.setModeMD();
@@ -162,10 +182,44 @@ void handle_set_long_press_time_resp(fb::Update& u){
     }  
 }
 
+void handle_set_msg_admin_power_on_req(fb::Update& u){
+    _set_context(u, COMMANDS_SET_MSG_ADMIN_POWER_ON);
+
+    fb::Message msg(
+        context_vise_translate_get_msg(Dictionary::SET_MSG_ADMIN_POWER_ON),
+            u.message().from().id());
+    fb::Menu menu;
+    menu.addButton("true");
+    menu.addButton("false");
+    menu.addButton(COMMANDS_START_BACK);
+    msg.setMenu(menu);
+    bot.sendMessage(msg);
+}
+
+void handle_set_msg_adming_power_on_resp(fb::Update& u){
+    uint32_t value = u.message().text().hash32();
+
+    if (value == HASH32("true")){
+        preferences.putBool(CONFIG_KEY_SEND_ADMIN_MSG_ON_OTHER_USERS_POWER_ON, true);
+
+        bot.sendMessage(fb::Message(context_vise_translate_get_msg(Dictionary::DONE), u.message().from().id()));
+
+        handle_send_menu_req(u);
+    }
+    else if (value == HASH32("false")){
+        preferences.putBool(CONFIG_KEY_SEND_ADMIN_MSG_ON_OTHER_USERS_POWER_ON, false);
+
+        bot.sendMessage(fb::Message(context_vise_translate_get_msg(Dictionary::DONE), u.message().from().id()));
+
+        handle_send_menu_req(u);
+    }else{
+        bot.sendMessage(fb::Message(context_vise_translate_get_msg(Dictionary::WRONG_VALUE), u.message().from().id()));
+    }
+}
+
 //
 // user management
 //
-
 void handle_manage_users_req(fb::Update& u){
     _set_context(u, COMMANDS_MANAGE_USERS);
 
@@ -192,7 +246,7 @@ void handle_give_access_req(fb::Update& u){
     for (uint32_t code : usersWaitingToGetAccessList){
         if (code == 0)
             continue;
-        menu.addButton(String(code));
+        menu.addButton(utils_getCodeFromUsersID(code));
     }
 
     menu.addButton(COMMANDS_START_BACK);
@@ -225,7 +279,7 @@ void handle_revoke_access_req(fb::Update& u){
         if (code == HASH32(ADMIN_CHAT_ID) || code == 0)
             continue; // one would never like to remove admin's access
 
-        menu.addButton(String(code));
+        menu.addButton(utils_getCodeFromUsersID(code));
     }
 
     menu.addButton(COMMANDS_START_BACK);
