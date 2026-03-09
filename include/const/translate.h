@@ -39,8 +39,8 @@ const char* const en_strings[] PROGMEM = {
     "Choose language", //CHOOSE_LANG
     "Done", //DONE
     "Wrong value", //WRONG_VALUE
-    "Button pressed short", //BUTTON_PRESSED_SHORT
-    "Button pressed long", //BUTTON_PRESSED_LONG
+    "The button was pressed briefly", //BUTTON_PRESSED_SHORT
+    "The button was pressed for a long time", //BUTTON_PRESSED_LONG
     "Settings", //SETTINGS
     "Send value from %d to %d (in ms)",//REQUEST_SHORT_PRESS_TIME_FMT
     "Send value from %d to %d (in ms)",//REQUEST_LONG_PRESS_TIME_FMT
@@ -49,7 +49,7 @@ const char* const en_strings[] PROGMEM = {
     "This user never requested the access",//USER_NEVER_REQUESTED_ACCESS
     "Revoke user's permission to use this app.\nEnter user's code or select from menu",//REVOKE_ACCESS
     "This user doesn't have access to this application",//USER_DOESNT_HAVE_ACCESS_TO_THIS_APP
-    "Welcome to the Turn On My PC bot!\nThe command list is:\n\n\
+    "Welcome to the Powerbutton bot!\nThe command list is:\n\n\
     /start - Show the main menu with buttons.\n\
     /help - Display help information.\n\
     /turn_on - Simulate a short press of the power button – toggles the PC on/off.\n\
@@ -70,7 +70,7 @@ const char* const en_strings[] PROGMEM = {
     "Too many users trying to get access. Ask administrator to clear waiting list",//TOO_MANY_USERS_TRYING_TO_GET_ACCESS
     "Access requested. Wait for admin to give you an access. Tell them this code: %s",//ACCESS_REQUESTED
     "Some user required access to this app. They should tell you this this code: %s.\nIn case you want to authorize this user, use this command %s",//ACCESS_REQUESTED_MESSAGE_ADMIN
-    "Welcome to the Turn On My PC bot!\nCurrently you have no access to use any of commands but these:\n\n/start - show menu;\n/help - show this message;\n/request_access - request access",//HELP_INFO_UNREGISTERED
+    "Welcome to the Powerbutton bot!\nCurrently you have no access to use any of commands but these:\n\n/start - show menu;\n/help - show this message;\n/request_access - request access",//HELP_INFO_UNREGISTERED
     "Some user pushed the button: their code: %s", //NOTIFY_ADMIN_ON_OTHERS_INTERACT
     "Toggle whether the admin is notified when another user presses the power button. Choose true or false from the menu or type the value",//SET_MSG_ADMIN_POWER_ON
 };
@@ -91,7 +91,7 @@ const char* const ru_strings[] PROGMEM = {
     "Данный пользователь не запрашивал доступ к приложению",//USER_NEVER_REQUESTED_ACCESS
     "Отзовите разрешение пользоваться приложением у пользователя.\nВведите код доступа пользователя, или выберите из меню",//REVOKE_ACCESS
     "У этого пользователя нет доступа к приложению",//USER_DOESNT_HAVE_ACCESS_TO_THIS_APP
-    "Добро пожаловать в бота Turn On My PC!\n\
+    "Добро пожаловать в бота Powerbutton!\n\
     Список команд:\n\n\
     /start - Показать главное меню с кнопками.\n\
     /help - Показать справку.\n\
@@ -113,7 +113,7 @@ const char* const ru_strings[] PROGMEM = {
     "Слишком много пользователей пытается получить доступ. Попросите администратора очистить список ожидания",//TOO_MANY_USERS_TRYING_TO_GET_ACCESS
     "Доступ запрошен. Ожидайте пока администратор выдаст вам доступ. Назовите ему этот код: %s",//ACCESS_REQUESTED
     "Кто-то запросил доступ в приложение. Они скажут вам этот код: %s.\nВ случае, если вы хотите разрешить этому пользователю доступ в приложение, воспользуйтесь этой командой: %s",//ACCESS_REQUESTED_MESSAGE_ADMIN
-    "Добро пожаловать в бот Turn On My PC!\nВ данный момент, у вас нет доступа к приложению и вы можете только использовать эти команды:\n\n/start - показать меню;\n/help - показать это сообщение;\n/request_access - запросить доступ",//HELP_INFO_UNREGISTERED
+    "Добро пожаловать в бот Powerbutton!\nВ данный момент, у вас нет доступа к приложению и вы можете только использовать эти команды:\n\n/start - показать меню;\n/help - показать это сообщение;\n/request_access - запросить доступ",//HELP_INFO_UNREGISTERED
     "Кто-то нажал на кнопку: их код: %s", //NOTIFY_ADMIN_ON_OTHERS_INTERACT
     "Включить/отключить уведомление администратора, когда другой пользователь нажимает кнопку питания. Выберите true или false в меню или введите значение",//SET_MSG_ADMIN_POWER_ON
 };
