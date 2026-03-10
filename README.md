@@ -29,7 +29,16 @@ Core settings are defined in `include/env.h`. This file is **not** included in t
 | `BOT_TOKEN`     | Get a token from [@BotFather](https://t.me/BotFather) when you create your bot.                                 | `123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11` |
 | `ADMIN_CHAT_ID` | Your personal chat ID (used for important notifications). Get it from [@userinfobot](https://t.me/userinfobot). | `123456789`                                 |
 
-After creating `env.h` with the correct values, compile and flash the device. Then send `/start` to your bot (the username you chose with BotFather). If the bot replies (it may take a few seconds), everything is set up correctly.
+### Building and Flashing with PlatformIO
+
+This project is developed using **Visual Studio Code** with the **PlatformIO** extension. To build and flash the firmware:
+
+1. Install [Visual Studio Code](https://code.visualstudio.com/) and the [PlatformIO IDE extension](https://platformio.org/install/ide?install=vscode).
+2. Clone or download this repository and open the project folder in VS Code.
+3. Ensure your `env.h` file is properly configured (see above).
+4. Connect your ESP32 board via USB.
+5. Click the **PlatformIO: Upload** icon in the left sidebar.
+6. Send `/start` to your bot (the username you chose with BotFather). If the bot replies (it may take a few seconds), everything is set up correctly.
 
 ### Commands
 
