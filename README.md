@@ -11,6 +11,8 @@ A simple Telegram bot to turn on your PC remotely, powered by an ESP32 and the F
 
 [Russian version is here](README.ru.MD)
 
+<img src="img/bot_screen.png" alt="Screenshot" width="350"/>
+
 ## Software
 
 ### Configuration
@@ -74,7 +76,7 @@ Additionally, this file contains paths to property fields used by the `Propertie
 
 ## Hardware
 
-![Scheme](./hardware/scheme.png)
+![Scheme](./img/scheme.png)
 
 An optocoupler controlled by an ESP32 shorts the power button pins on the motherboard's front panel connector.  
 The motherboard pins are connected to the optocoupler via DuPont (2.54mm) cables, as are the physical power button wires.  
